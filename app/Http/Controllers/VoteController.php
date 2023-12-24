@@ -40,7 +40,7 @@ class VoteController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'title'=>'required',
+            'title'=>'required|unique:votes',
             // 'image'=>'required',
         ]);
 

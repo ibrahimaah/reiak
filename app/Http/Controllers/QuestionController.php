@@ -47,7 +47,8 @@ class QuestionController extends Controller
             'vote_id'=>$request->vote_id,
             'content'=>$request->content,
         ]);
-        return $question;
+        return response()->json(['question'=>$question,'redirect' => '/']);
+        // return $question;
     }
 
     /**

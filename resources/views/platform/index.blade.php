@@ -40,27 +40,15 @@
         <div class="col-12 col-lg-6">
             <!-- Simple card -->
             <div class="card" style='height:330px;'>
-                @if($vote->image)
-                    @if(file_exists(public_path('files/' . $vote->image)))
-                        <img class="card-img-top" 
-                             width='100%' 
-                             height='200px' 
-                             src="{{ asset('files/'.$vote->image) }}" 
-                             alt="Card image cap">
-                    @else 
-                        <img class="card-img-top" 
-                             width='100%' 
-                             height='200px' 
-                             src="{{ asset('assets/images/logo/logo.png') }}" 
-                             alt="Card image cap">
-                    @endif
-                @else 
-                    <img class="card-img-top" 
-                         width='100%' 
-                         height='200px' 
-                         src="{{ asset('assets/images/logo/logo.png') }}" 
-                         alt="Card image cap">
-                @endif
+             
+
+                <img class="card-img-top" 
+                        width='100%' 
+                        height='200px' 
+                        src="{{ asset('files/'.$vote->image) }}" 
+                        onerror="this.src='{{ asset('assets/images/logo/logo.png') }}';"
+                        alt="Card image cap">
+          
                 <div class="card-body">
                     <h4 class="card-title mb-2">{{ Illuminate\Support\Str::limit($vote->title, 30) }} </h4>
                     {{-- <p class="card-text">At missed advice my it no sister. Miss told ham dull knew see she spot near can. Spirit her entire her called.</p> --}}

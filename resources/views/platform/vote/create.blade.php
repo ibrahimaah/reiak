@@ -13,18 +13,18 @@
         @if(session()->has('error_store'))
             <div class='alert alert-danger'>{{ session()->get('error_store') }}</div>
         @endif
-       
+        {{-- <h5 class='mb-3 text-success text-center'>إضافة رأي</h5> --}}
         <form action="{{ route('vote.store') }}" method="post" enctype="multipart/form-data">
             @csrf
             <div>
-                <label for="formFile" class="form-label">  عنوان الرأي  </label>
+                <label for="formFile" class="form-label">  عنوان الموضوع  </label>
                 <input class="form-control" name="title" value="{{ old('title') }}" type="text" id="formFile" placeholder=" أدخل عنوان الرأي " required/>
                 @error('title')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
             <div class="mt-4">
-                <label for="formFile" class="form-label"> الصورة الاساسية </label>
+                <label for="formFile" class="form-label">صورة الموضوع</label>
                 <input class="form-control" name="image" type="file" id="formFile">
                {{-- @error('image')
                     <span class="text-danger">{{ $message }}</span>
@@ -43,7 +43,7 @@
     <div class="card-body">
         <div class="mt-4">
             <div>
-                <h3 class='mb-3 text-success text-center'>ملء الآراء</h3>
+                <h5 class='mb-3 text-success text-center'>إضافة الأسئلة والاختيارات </h5>
 
                 <!-- Accordions with Plus Icon -->
                 @forelse (Auth::user()->votes->sortByDesc('created_at') as $vote)
@@ -71,7 +71,7 @@
                                     @else
                                         @if(isset($vote->questions[0]))
                                              <div class='text-center'>
-                                                 <p>  
+                                                 <p class="text-secondary">  
                                                     لا تتوفر نتائج بعد 
                                                  </p>
                                             </div>
@@ -120,7 +120,9 @@
                     </div>
                 </div>
                 @empty
-                    
+                    <div class="alert alert-info text-center">
+                        قم بإضافة رأي أولاً ثم ابدأ بإضافة الأسئلة والاختيارات
+                    </div>
                 @endforelse
                 <!-- Accordions Bordered -->
 
@@ -150,69 +152,85 @@
     parent.after(newParent);
 });
 
-    $('.submitdata').click(function(e){
+
+    const btn_submit = $('.submitdata')
+    btn_submit.click(function(e){
         // e.preventDefault()
         const btn_send = $(this)
         const btn_send_parent = btn_send.parents("div").parents("div")
         const dataid = btn_send_parent.attr("data-id")
         
-        $(this).html(`<span> تحميل </span><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`);
-        $(this).prop('disabled',true)
+        
 
         btn_send_parent.find(`.question${dataid}`).each(function(){
-                const field = $(this); //question field
-                // console.log(field.val());
-                // const fileInput = field.next('div').find('input[type="file"]')[0].files[0];
+                const question_field = $(this); //question field
+                // console.log(question_field.val());
+                // const fileInput = question_field.next('div').find('input[type="file"]')[0].files[0];
             
             
-                const fileInputget = field.next('div').find('input[type="file"]')
+                const fileInputget = question_field.next('div').find('input[type="file"]')
                 const chooseInput = fileInputget.parent().next().find('input[name="choose"]');
 
                 let formData = new FormData();
                 formData.append('_token', '{{ csrf_token() }}');
                 formData.append('vote_id',dataid);
                 
-                formData.append('content', field.val());
+                formData.append('content', question_field.val());
+
+                
                 // formData.append('image', fileInput);
                 var choice_number = 1
-                $.ajax({
-                    url: "{{ route('question.store') }}",
-                    method: "POST",
-                    processData: false,
-                    contentType: false,
-                    data: formData,
-                    success: function (response) {
-                        showToastMessage('تم إضافة السؤال بنجاح')
-                        chooseInput.each(function(){
-                            if ($(this).val()) {
-                                $.ajax({
-                                    url: "{{ route('choose.store') }}",
-                                    method: "POST",
-                                    data: {
-                                        _token: '{{ csrf_token() }}', 
-                                        question_id: response.id, //the response is $question object
-                                        content: $(this).val(),
-                                    },
-                                    success: function (response) {
-                                            showToastMessage(`تم إضافة الاختيار ${choice_number} بنجاح`)
-                                            ++choice_number
-                                    },
-                                    error: function(xhr, status, error) {
-                                        showToastMessage('حدث خطأ في إضافة الاختيارات',true)
-                                        // Handle any errors that occur
-                                        console.log(JSON.parse(xhr.responseText))
-                                    }
-                                })   
-                            }                 
-                        })},
+                if (formData.has('_token') && formData.has('vote_id')) 
+                {
+                    if(question_field.val())
+                    {
+                        btn_submit.html(`<span> تحميل </span><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`);
+                        btn_submit.prop('disabled',true)
+                        $.ajax({
+                            url: "{{ route('question.store') }}",
+                            method: "POST",
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            success: function (response) {
+                                showToastMessage('تم إضافة السؤال بنجاح')
+                                chooseInput.each(function(){
+                                    if ($(this).val()) {
+                                        $.ajax({
+                                            url: "{{ route('choose.store') }}",
+                                            method: "POST",
+                                            data: {
+                                                _token: '{{ csrf_token() }}', 
+                                                question_id: response.question.id,
+                                                content: $(this).val(),
+                                            },
+                                            success: function (response) {
+                                                    showToastMessage(`تم إضافة الخيار ${choice_number} بنجاح`)
+                                                    ++choice_number
+                                            },
+                                            error: function(xhr, status, error) {
+                                                showToastMessage('حدث خطأ في إضافة الاختيارات',true)
+                                                // Handle any errors that occur
+                                                console.log(JSON.parse(xhr.responseText))
+                                            }
+                                        })   
+                                    }                 
+                                })},
 
-                    error: function(xhr, status, error) {
-                            showToastMessage('حدث خطأ في إضافة السؤال',true)
-                            // Handle any errors that occur
-                            console.log(JSON.parse(xhr.responseText))
-                        }
-            });
-        })
+                            error: function(xhr, status, error) {
+                                    // showToastMessage('حدث خطأ في إضافة السؤال',true)
+                                    showToastMessage('السؤال موجود مسبقاً .. الرجاء إضافة سؤال آخر',true)
+                                    // Handle any errors that occur
+                                    // console.log(JSON.parse(xhr.responseText))
+                                }
+                        });
+                    }
+                }
+                else
+                {
+                    showToastMessage('حدث خطأ ما',true)
+                }
+        })      
         setTimeout(function() {
             $('.submitdata').html('ارسال')
             $('.submitdata').prop('disabled',false)

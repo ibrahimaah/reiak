@@ -1,5 +1,4 @@
 <link rel="shortcut icon" href="{{ asset("assets/images/favicon.ico") }}">
-
 <!-- Fonts css load -->
 {{-- <link rel="preconnect" href="https://fonts.googleapis.com/">
 <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
@@ -28,6 +27,7 @@
 <!-- App Css-->
 <link href="{{ asset("assets/css/app.min.css") }}" rel="stylesheet" type="text/css">
 <!-- <link href="{{ asset("assets/css/app.css") }}" rel="stylesheet" type="text/css"> -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.6.3/css/all.min.css" integrity="sha512-f2MWjotY+JCWDlE0+QAshlykvZUtIm35A6RHwfYZPdxKgLJpL8B+VVxjpHJwZDsZaWdyHVhlIHoblFYGkmrbhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <!-- custom Css-->
 <link href="{{ asset("assets/css/custom.min.css") }}" rel="stylesheet" type="text/css">
 

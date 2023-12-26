@@ -7,16 +7,21 @@
     @include('admin.components.style')
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-
+    <!-- <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
+    <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script> -->
+    
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         function showToastMessage(text='تمت المعالجة بنجاح',isError=false){
             Toastify({  text ,
+                        duration:3000,
                         style: {
                             background: isError ? "var(--error-color)" : "var(--success-color)",
-                            color: "white" }
+                            color: "white" },
+                            gravity: "top", 
+                            position: "center" 
             }).showToast();
         }
     </script>
@@ -46,6 +51,7 @@
                 </div>
         </main>
     </div>
+    
      @include('platform.components.footer')
     @include('admin.components.scripts')
     

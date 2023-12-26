@@ -1,7 +1,7 @@
 @extends('platform.layouts.layout')
 @section('content')
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.6.3/css/all.min.css" integrity="sha512-f2MWjotY+JCWDlE0+QAshlykvZUtIm35A6RHwfYZPdxKgLJpL8B+VVxjpHJwZDsZaWdyHVhlIHoblFYGkmrbhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 <style>
     .myOtherBarChart{
       font: 15px sans-serif;
@@ -226,7 +226,7 @@
                                             <h1 class="modal-title text-success fs-5" id="addCommentModalLabel">تعديل تعليق </h1>
                                         </div>
                                         <form method='POST' action="{{ route('update-comment',['id'=>$comment->id]) }}">
-                                            @csrf;
+                                            @csrf
                                             @method('PUT')
                                             <input type='hidden' name='title_slug' value="{{ $title_slug }}"/>
                                             <div class="modal-body">
@@ -277,7 +277,7 @@
                 <h1 class="modal-title text-success fs-5" id="addCommentModalLabel">إضافة تعليق جديد</h1>
             </div>
             <form method='POST' action="{{ route('store-comment') }}">
-                @csrf;
+                @csrf
                 <input type='hidden' name='title_slug' value="{{ $title_slug }}"/>
                 <div class="modal-body">
                         

@@ -9,11 +9,11 @@
     اضافة موضوع
     </a>
 </li>
-{{-- <li class="nav-item">
+<li class="nav-item">
     <a class="nav-link {{ request()->is('mysubjects') ? 'active' : 'text-secondary' }}" href="{{ route('vote.mysubjects') }}">
         مواضيعي
     </a>
-</li> --}}
+</li>
 @endauth
 <li class="nav-item">
     <a class="nav-link text-secondary" href="#" >  دليلك </a>

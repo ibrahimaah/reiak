@@ -45,7 +45,7 @@
                 <img class="card-img-top" 
                         width='100%' 
                         height='200px' 
-                        src="{{ asset('files/'.$vote->image) }}" 
+                        src="{{ storage_path('app/public/images/'.$vote->image) }}" 
                         onerror="this.src='{{ asset('assets/images/logo/logo.png') }}';"
                         alt="Card image cap">
           

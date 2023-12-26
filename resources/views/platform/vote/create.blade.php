@@ -1,6 +1,6 @@
 @extends('platform.layouts.layout')
 @section('content')
-
+ 
 <div class="card">
     <div class="card-body">
 
@@ -14,125 +14,178 @@
             <div class='alert alert-danger'>{{ session()->get('error_store') }}</div>
         @endif
         {{-- <h5 class='mb-3 text-success text-center'>إضافة رأي</h5> --}}
-        <form action="{{ route('vote.store') }}" method="post" enctype="multipart/form-data">
-            @csrf
+        <form method="post" enctype="multipart/form-data" id="addVoteForm">
+            {{-- @csrf --}}
             <div>
-                <label for="formFile" class="form-label">  عنوان الموضوع  </label>
-                <input class="form-control" name="title" value="{{ old('title') }}" type="text" id="formFile" placeholder=" أدخل عنوان الرأي " required/>
+                <label for="vote_title" class="form-label text-success">  عنوان الموضوع  </label>
+                <input class="form-control"
+                       name="title" 
+                       type="text"
+                       id="vote_title"
+                       placeholder=" أدخل عنوان الموضوع "
+                       required
+                />
                 @error('title')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror
             </div>
             <div class="mt-4">
-                <label for="formFile" class="form-label">صورة الموضوع</label>
-                <input class="form-control" name="image" type="file" id="formFile">
+                <label class="form-label text-success">أضف صورة/فيديو</label>
+                <input class="form-control upload-file"
+                       name="image"
+                       id="img_or_video"
+                       type="file"/>
+                       
                {{-- @error('image')
                     <span class="text-danger">{{ $message }}</span>
                 @enderror --}}
             </div>
             <div class="mt-4">
-                <button class="btn btn-success px-4"> اضافة  </button>
-            </div>
-        </form>
-
-    
-</div>
-
-
-<div class="card">
-    <div class="card-body">
-        <div class="mt-4">
-            <div>
-                <h5 class='mb-3 text-success text-center'>إضافة الأسئلة والاختيارات </h5>
-
-                <!-- Accordions with Plus Icon -->
-                @forelse (Auth::user()->votes->sortByDesc('created_at') as $vote)
-                <div class="accordion custom-accordionwithicon custom-accordion-border accordion-border-box accordion-success"
-                     id="accordionBordered">
-                    <div class="accordion-item mt-2">
-                        <h2 class="accordion-header" id="accordionborderedExample2">
-                            <button class="accordion-button collapsed text-secondary bg-light border border-1 border-success" 
-                                    type="button" 
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#accor_borderedExamplecollapse{{ $vote->id }}"
-                                    aria-expanded="false" 
-                                    aria-controls="accor_borderedExamplecollapse{{ $vote->id }}">
-                               <span class="ms-3">{{ $vote->title }}</span>
-                            </button>
-                        </h2>
-                        <div id="accor_borderedExamplecollapse{{ $vote->id }}" class="accordion-collapse collapse" aria-labelledby="accordionborderedExample2" data-bs-parent="#accordionBordered">
-                            <div class="accordion-body  tryfix"  data-id='{{ $vote->id }}'>
-                                <div style="overflow-y: auto;
-                                            {{ isset($vote->results[0]) ? '' : 'height:400px;' }}" >
-                                    @if (isset($vote->results[0]))
-                                    <div class='text-center'>
-                                        <a href="{{ route('result.show',$vote->title_slug) }}" class='btn btn-success'> عرض النتائج  </a>
-                                    </div>
-                                    @else
-                                        @if(isset($vote->questions[0]))
-                                             <div class='text-center'>
-                                                 <p class="text-secondary">  
-                                                    لا تتوفر نتائج بعد 
-                                                 </p>
-                                            </div>
-                                        @else
-                                            <div class="list-group this col nested-list nested-sortable-handle ">
-                                                <div class="list-group-item tryfix nested-1">
-
-                                                    <i class="bi bi-plus-lg align-bottom all handle bg-success text-light position-sticky"
-                                                       style="left: 0;z-index:2;cursor:pointer">
-                                                    </i>
-
-                                                    <input class="form-control question{{ $vote->id }}" type="text" id="formFile" placeholder=" أدخل السؤال ">
-                                                    <div class="d-none">
-                                                        <input class="form-control mt-2" type="file" id="formFile" >
-                                                    </div>
-                                                        <div class="list-group2 nested-list nested-sortable-handle">
-                                                            <div class="list-group nested-list nested-sortable-handle">
-                                                                <div class="list-group-item nested-3">
-                                                                    <input class="form-control"  name="choose" type="text" id="formFile" placeholder=" أدخل الاختيار ">
-                                                                </div>
-                                                                <div class="list-group-item nested-3">
-                                                                    <input class="form-control"  name="choose" type="text" id="formFile" placeholder=" أدخل الاختيار ">
-                                                                </div>
-                                                                <div class="list-group-item nested-3">
-                                                                    <input class="form-control"  name="choose" type="text" id="formFile" placeholder=" أدخل الاختيار ">
-                                                                </div>
-                                                                <div class="list-group-item nested-3">
-                                                                    <input class="form-control"  name="choose" type="text" id="formFile" placeholder=" أدخل الاختيار ">
-                                                                </div>
-                                                                <div class="list-group-item nested-3">
-                                                                    <input class="form-control"  name="choose" type="text" id="formFile" placeholder=" أدخل الاختيار ">
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                </div>
-                                            </div> 
-                                            <button class="btn btn-success submitdata mt-2"> ارسال </button>
-                                        @endif
-                                    @endif
+                <label class="form-label text-success">الأسئلة والاختيارات</label>
+                <div>
+                    <div data-x-wrapper="questions">
+                        <div data-x-group class="position-relative">
+                            <div class="mb-3">
+                                <input 
+                                    type="text" 
+                                    name="question" 
+                                    class="form-control w-75 border border-secondary" 
+                                    placeholder="أدخل السؤال">
+                            </div>
+                            <div class="mb-3">
+                                <div class="list-group">
+                                <input type="text" name="choice1" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 1">
+                                <input type="text" name="choice2" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 2">
+                                <input type="text" name="choice3" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 3">
+                                <input type="text" name="choice4" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 4">
                                 </div>
-                             
-                                
-                                
+                            </div>
+                           
+                            <div id="actions" class="mb-3 d-flex justify-content-center gap-2">
+                                <button type="button" class="btn btn-sm btn-outline-success" data-add-btn>
+                                    <i class="fas fa-plus"></i> أضف سؤالاً آخر  
+                                </button>
+                                <button type="button"
+                                        class="btn btn-sm btn-outline-danger position-absolute"
+                                        style="left:0;top:0"
+                                        data-remove-btn>
+                                    <i class="fas fa-trash"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                @empty
-                    <div class="alert alert-info text-center">
-                        قم بإضافة رأي أولاً ثم ابدأ بإضافة الأسئلة والاختيارات
-                    </div>
-                @endforelse
-                <!-- Accordions Bordered -->
-
             </div>
-        </div>
+            <button type="submit" class="btn btn-success">إضافة</button>
+        </form>
+
     </div>
+</div>
+
+
+
 
     
-</div>
-<!-- <script src='https://code.jquery.com/jquery-3.7.1.min.js'></script> -->
+<script src="{{ asset('assets/js/jquery.replicate.js') }}"></script>
+<script>
+    // Show overlay
+    function showOverlayWithMessage(message) {
+        $("<div id='overlay'></div>")
+            .css({
+                position: "fixed",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                background: "rgba(0, 0, 0, 0.5)",
+                zIndex: 9999,
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center"
+            })
+            .html(`<div id='overlay-message' class='alert alert-success'>${message}</div>`)
+            .appendTo("body");
+    }
+    // Hide overlay
+    function hideOverlay() {
+        $("#overlay").remove();
+    }
+
+
+    const selector = '[data-x-wrapper]';
+    let options = {
+        disableNaming: '[data-disable-naming]',
+        wrapper: selector,
+        group: '[data-x-group]',
+        addBtn: '[data-add-btn]',
+        removeBtn: '[data-remove-btn]'
+    };
+
+    $(selector).replicate(options);
+
+
+
+    //hiding trash icon from first form
+    // $('[data-add-btn]').on('click',()=>{
+        // $('#addVoteForm > div:nth-child(3) > div > div > div:nth-child(1) button.btn-outline-danger').addClass('invisible')
+        // $('#addVoteForm > div:nth-child(3) > div > div > div:nth-child(1) button.btn-outline-success').on('click',()=>{
+        //     $('#addVoteForm > div:nth-child(3) > div > div > div:nth-child(2) button.btn-outline-danger').addClass('btn-lg')
+        // })
+    // })
+    
+    // $('[data-x-group="0"]').addClass('invisible')
+    
+    
+
+    const form = $('#addVoteForm');
+
+    $(form).on('submit', (e) => {
+        e.preventDefault()
+        let fd = $(form).serializeArray()
+    
+        //if there is img_or_video then add it else skip
+        let img_or_video = $('#img_or_video')[0].files[0]
+        if ($('#img_or_video')[0].files[0]) {
+            fd = [...fd, {name: 'image',value: img_or_video}]
+        }
+
+        let formData = new FormData();
+        for (let i = 0; i < fd.length; i++) {
+            formData.append(fd[i].name, fd[i].value);
+        }
+        const waiting_msg = 'جاري المعالجة ...'
+        const err_msg = 'حدث خطأ في المعالجة'
+
+        $.ajax({
+                url: "{{ route('vote.store') }}",
+                method: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                processData: false,
+                contentType: false,
+                data: formData, 
+                beforeSend: function() {
+                    showOverlayWithMessage(waiting_msg);
+                },
+                complete: function() {
+                    hideOverlay();
+                    // $(form).reset()
+                },
+                success:(response)=>{
+                    if (response.success == 0) {
+                        showToastMessage(response.msg,true)
+                    }else if(response.success == 1){
+                        showToastMessage(response.msg)
+                    }
+                },
+                error:()=>{
+                    showToastMessage(err_msg,true)
+                }
+        })
+
+    })
+</script>
 <script> 
 
     $(document).on('click', '.all', function() {

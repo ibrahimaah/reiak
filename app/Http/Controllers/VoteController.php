@@ -4,8 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Vote;
 use Exception;
+use getID3;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\File;
+// use Illuminate\Support\Facades\Storage;
 
 class VoteController extends Controller
 {
@@ -39,39 +43,107 @@ class VoteController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'title'=>'required|unique:votes',
-            // 'image'=>'required',
-        ]);
-
-        $img_path = null;
-
-        if ($request->hasFile('image')) 
+        try
         {
-            $img_path = $request->file('image')->store('images', 'custom_disk');
+            $data = [];
+            //First of all , handle the image/video
+            // 'image' can be image or video
+            $file_path = '';
+            $file_full_path = '';
+            $vote = null;
 
-            if (!$img_path) 
-                $request->session()->flash('error_store', ' سحدث خطأ في إضافة صورة الرأي ، سيتم استخدام الصورة الافتراضية');
-            
-        } 
-        else{
-            $request->session()->flash('default_image', 'تنويه : لم تقم بإضافة صورة لذلك سيتم استخدام الصورة الافتراضية');
-        }
-        
-        $vote = Vote::create([
-            'title'=>$request->title,
-            'image'=>$img_path,
-            'user_id'=>Auth::user()->id,
-            'title_slug'=>str_replace(' ','-',$request->title),
-        ]);
+            if ($request->hasFile('image')) 
+            {
+                $file = $request->file('image');
+                $mimeType = $file->getMimeType();
+                if (strpos($mimeType, 'image') !== false) 
+                {
+                    $img_path = $request->file('image')->store('images', 'public');
+                    $file_full_path = storage_path('app/public/'.$img_path);
+                    if (!$img_path) 
+                    {
+                        throw new Exception('حدث خطأ في تخزين الصورة');
+                    }
+                    else
+                    {
+                        $file_path = $img_path;
+                    }
+                } 
+                elseif (strpos($mimeType, 'video') !== false) 
+                {
+                    $video_path = $request->file('image')->store('videos', 'public');
+                    $file_full_path = storage_path('app/public/'.$video_path);
+                    if (!$video_path) 
+                    {
+                        throw new Exception('حدث خطأ في تخزين الفيديو');
+                    }
+                    else
+                    {
+                        $getID3 = new getID3;
+                        $videoFileInfo = $getID3->analyze($file_full_path);
+                        $durationSeconds = $videoFileInfo['playtime_seconds'];
+                        if ($durationSeconds > 20) 
+                        {
+                            throw new Exception('يجب ألا تتجاوز مدة الفيديو 20 ثانية');
+                        }
+                        else
+                        {
+                            $file_path = $video_path;
+                        }
+                        
+                    }
+                }
+            } 
 
-        if ($vote) {
-            $request->session()->flash('success_store', 'تم إضافة الرأي بنجاح');
-        }else{
-            $request->session()->flash('error_store', 'حدث خطأ في إضافة الرأي');
+            $validator = Validator::make($request->all(), [
+                'title' => 'required|unique:votes'
+            ]);
+            if ($validator->fails()) 
+            {
+                throw new Exception('العنوان موجود مسبقاً .. الرجاء إدخال عنوان آخر');
+            }
+            else
+            {
+                $vote = Vote::create([
+                    'title'=>$request->title,
+                    'image'=>$file_path,
+                    'user_id'=>Auth::user()->id,
+                    'title_slug'=>str_replace(' ','-',$request->title),
+                ]);
+                if ($vote) {
+                    //create question
+                    $question = '';
+
+                    if ($question) 
+                    {
+                        # code...
+                    }
+                    else 
+                    {
+                        $vote->delete();
+                    }
+                }else{
+
+                }
+                $data['success'] = 1;
+                $data['msg'] = 'تمت المعالجة بنجاح';
+            }
+            return response()->json($data);
         }
-      
-        return back();
+        catch(Exception $ex)
+        {
+            if ($vote) 
+            {
+                $vote->delete();
+            }
+            if(File::exists($file_full_path)) 
+            {
+                File::delete($file_full_path);
+            }
+            $data['success'] = 0;
+            $data['msg'] = $ex->getMessage();
+            return response()->json($data);
+        }
     }
 
     /**

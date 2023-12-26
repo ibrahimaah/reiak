@@ -77,7 +77,7 @@
                     </div>
                 </div>
             </div>
-            <button type="submit" class="btn btn-success">إضافة</button>
+            <button type="submit" class="btn btn-success" id="submit_button">إضافة</button>
         </form>
 
     </div>
@@ -104,7 +104,14 @@
                 justifyContent: "center",
                 alignItems: "center"
             })
-            .html(`<div id='overlay-message' class='alert alert-success'>${message}</div>`)
+            .html(`
+                    <div id='overlay-message' class='d-flex alert alert-success'>
+                     <div>${message} &nbsp;</div>
+                     <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    </div>
+                `)
             .appendTo("body");
     }
     // Hide overlay
@@ -154,7 +161,7 @@
         for (let i = 0; i < fd.length; i++) {
             formData.append(fd[i].name, fd[i].value);
         }
-        const waiting_msg = 'جاري المعالجة ...'
+        const waiting_msg = 'جاري المعالجة'
         const err_msg = 'حدث خطأ في المعالجة'
 
         $.ajax({
@@ -167,10 +174,12 @@
                 contentType: false,
                 data: formData, 
                 beforeSend: function() {
+                    $('#submit_button').addClass('disabled')
                     showOverlayWithMessage(waiting_msg);
                 },
                 complete: function() {
                     hideOverlay();
+                    $('#submit_button').removeClass('disabled')
                     // $(form).reset()
                 },
                 success:(response)=>{
@@ -187,110 +196,5 @@
 
     })
 </script>
-<script> 
 
-    $(document).on('click', '.all', function() {
-    // Clone the parent list-group div
-    var parent = $(this).closest('.this');
-    
-    var newParent = parent.clone();
-
-    // Remove the 'all' class from the clone to prevent infinite duplication
-
-    // Clear the input values in the clone
-    newParent.find('input[type="text"]').val('');
-    newParent.find('input[type="file"]').val('');
-    newParent.find('.handle').html('');
-
-    // Add the cloned parent div after the original parent div
-    parent.after(newParent);
-});
-
-
-    const btn_submit = $('.submitdata')
-    btn_submit.click(function(e){
-        // e.preventDefault()
-        const btn_send = $(this)
-        const btn_send_parent = btn_send.parents("div").parents("div")
-        const dataid = btn_send_parent.attr("data-id")
-        
-        
-
-        btn_send_parent.find(`.question${dataid}`).each(function(){
-                const question_field = $(this); //question field
-                // console.log(question_field.val());
-                // const fileInput = question_field.next('div').find('input[type="file"]')[0].files[0];
-            
-            
-                const fileInputget = question_field.next('div').find('input[type="file"]')
-                const chooseInput = fileInputget.parent().next().find('input[name="choose"]');
-
-                let formData = new FormData();
-                formData.append('_token', '{{ csrf_token() }}');
-                formData.append('vote_id',dataid);
-                
-                formData.append('content', question_field.val());
-
-                
-                // formData.append('image', fileInput);
-                var choice_number = 1
-                if (formData.has('_token') && formData.has('vote_id')) 
-                {
-                    if(question_field.val())
-                    {
-                        btn_submit.html(`<span> تحميل </span><span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>`);
-                        btn_submit.prop('disabled',true)
-                        $.ajax({
-                            url: "{{ route('question.store') }}",
-                            method: "POST",
-                            processData: false,
-                            contentType: false,
-                            data: formData,
-                            success: function (response) {
-                                showToastMessage('تم إضافة السؤال بنجاح')
-                                chooseInput.each(function(){
-                                    if ($(this).val()) {
-                                        $.ajax({
-                                            url: "{{ route('choose.store') }}",
-                                            method: "POST",
-                                            data: {
-                                                _token: '{{ csrf_token() }}', 
-                                                question_id: response.question.id,
-                                                content: $(this).val(),
-                                            },
-                                            success: function (response) {
-                                                    showToastMessage(`تم إضافة الخيار ${choice_number} بنجاح`)
-                                                    ++choice_number
-                                            },
-                                            error: function(xhr, status, error) {
-                                                showToastMessage('حدث خطأ في إضافة الاختيارات',true)
-                                                // Handle any errors that occur
-                                                console.log(JSON.parse(xhr.responseText))
-                                            }
-                                        })   
-                                    }                 
-                                })},
-
-                            error: function(xhr, status, error) {
-                                    // showToastMessage('حدث خطأ في إضافة السؤال',true)
-                                    showToastMessage('السؤال موجود مسبقاً .. الرجاء إضافة سؤال آخر',true)
-                                    // Handle any errors that occur
-                                    // console.log(JSON.parse(xhr.responseText))
-                                }
-                        });
-                    }
-                }
-                else
-                {
-                    showToastMessage('حدث خطأ ما',true)
-                }
-        })      
-        setTimeout(function() {
-            $('.submitdata').html('ارسال')
-            $('.submitdata').prop('disabled',false)
-        }, 3000);
-    })
-
-
-</script>
 @endsection

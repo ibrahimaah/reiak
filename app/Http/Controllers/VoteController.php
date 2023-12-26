@@ -45,23 +45,34 @@ class VoteController extends Controller
      */
     public function store(Request $request)
     {
-        $questions_and_choices = [];
-
-        foreach ($request->questions as $item) {
-            $question = $item["question"];
-            $choices = array_slice($item, 1); // Remove the first element (question) from the array
-            $questions_and_choices[] = ["question" => $question, "choices" => $choices];
-        }
-        // dd($questions_and_choices);
+        $data = [];
+        $file_path = '';
+        $file_full_path = '';
+        $vote = null;
+        $vote_id = null;
+        
         try
         {
-            $data = [];
-            //First of all , handle the image/video
+            //First of all , checking validation rules
+            $validator = Validator::make($request->all(), [
+                'title' => 'required|unique:votes',
+                'image' => 'file|mimetypes:image/*,video/*'
+            ]);
+
+            if ($validator->fails()) 
+            {
+                if ($validator->errors()->has('title')) 
+                {
+                    throw new Exception('العنوان موجود مسبقاً .. الرجاء إدخال عنوان آخر');
+                } 
+                elseif ($validator->errors()->has('image')) 
+                {
+                    throw new Exception('خطأ في صيغة الملف');
+                } 
+            }
+            
+             //First , handle the image/video
             // 'image' can be image or video
-            $file_path = '';
-            $file_full_path = '';
-            $vote = null;
-            $vote_id = null;
             if ($request->hasFile('image')) 
             {
                 $file = $request->file('image');
@@ -104,46 +115,50 @@ class VoteController extends Controller
                 }
             } 
 
-            $validator = Validator::make($request->all(), [
-                'title' => 'required|unique:votes'
-            ]);
-            if ($validator->fails()) 
+            //questions and choices
+            $questions_and_choices = [];
+            foreach ($request->questions as $item) 
             {
-                throw new Exception('العنوان موجود مسبقاً .. الرجاء إدخال عنوان آخر');
+                $question = $item["question"];
+                $choices = array_slice($item, 1); // Remove the first element (question) from the array
+                $questions_and_choices[] = ["question" => $question, "choices" => $choices];
+            }
+
+            $vote = Vote::create([
+                'title'=>$request->title,
+                'image'=>$file_path,
+                'user_id'=>Auth::user()->id,
+                'title_slug'=>str_replace(' ','-',$request->title),
+            ]);
+            if ($vote) 
+            {
+                $vote_id = $vote->id;
+                //create question
+                foreach ($questions_and_choices as $question_and_choice) 
+                {
+                    $question = new Question();
+                    $question->content = $question_and_choice['question'];
+                    $question->vote_id = $vote_id;
+                    $question->save();
+            
+                    foreach ($question_and_choice['choices'] as $choiceText) 
+                    {
+                        if (!$choiceText) continue;
+
+                        $choice = new ModelsChoise();
+                        $choice->content = $choiceText;
+                        $question->chooses()->save($choice);
+                    }
+                }
+                
             }
             else
             {
-                $vote = Vote::create([
-                    'title'=>$request->title,
-                    'image'=>$file_path,
-                    'user_id'=>Auth::user()->id,
-                    'title_slug'=>str_replace(' ','-',$request->title),
-                ]);
-                if ($vote) {
-                    $vote_id = $vote->id;
-                    //create question
-                    foreach ($questions_and_choices as $question_and_choice) {
-                        $question = new Question();
-                        $question->content = $question_and_choice['question'];
-                        $question->vote_id = $vote_id;
-                        $question->save();
-                
-                        foreach ($question_and_choice['choices'] as $choiceText) {
-                            if (!$choiceText) {
-                                continue;
-                            }
-                            $choice = new ModelsChoise();
-                            $choice->content = $choiceText;
-                            $question->chooses()->save($choice);
-                        }
-                    }
-                   
-                }else{
-                    throw new Exception('حدث خطأ في إضافة الموضوع');
-                }
-                $data['success'] = 1;
-                $data['msg'] = 'تمت المعالجة بنجاح';
+                throw new Exception('حدث خطأ في إضافة الموضوع');
             }
+            $data['success'] = 1;
+            $data['msg'] = 'تمت المعالجة بنجاح';
+            
             return response()->json($data);
         }
         catch(Exception $ex)

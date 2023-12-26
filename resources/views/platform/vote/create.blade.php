@@ -50,14 +50,15 @@
                                     type="text" 
                                     name="question" 
                                     class="form-control w-75 border border-secondary" 
-                                    placeholder="أدخل السؤال">
+                                    placeholder="أدخل السؤال" 
+                                    required />
                             </div>
                             <div class="mb-3">
                                 <div class="list-group">
-                                <input type="text" name="choice1" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 1">
-                                <input type="text" name="choice2" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 2">
-                                <input type="text" name="choice3" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 3">
-                                <input type="text" name="choice4" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 4">
+                                <input type="text" name="choice1" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 1" required />
+                                <input type="text" name="choice2" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 2" required />
+                                <input type="text" name="choice3" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 3" />
+                                <input type="text" name="choice4" class="form-control list-group-item mb-2 me-5 w-75 border border-secondary" placeholder="الخيار 4" />
                                 </div>
                             </div>
                            

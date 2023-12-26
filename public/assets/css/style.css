@@ -68,3 +68,7 @@
   .custom-accordionwithicon .accordion-button:not(.collapsed)::after{
     content: "\f0143";
   }
+
+  /* #addVoteForm > div:nth-child(3) > div > div:nth-child(3) > div > div:nth-child(3) > button.btn-outline-danger{
+    visibility: hidden;
+  } */

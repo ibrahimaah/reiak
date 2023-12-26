@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Question;
 use App\Models\Vote;
+use App\Models\Choise as ModelsChoise;
 use Exception;
 use getID3;
 use Illuminate\Http\Request;
@@ -43,6 +45,14 @@ class VoteController extends Controller
      */
     public function store(Request $request)
     {
+        $questions_and_choices = [];
+
+        foreach ($request->questions as $item) {
+            $question = $item["question"];
+            $choices = array_slice($item, 1); // Remove the first element (question) from the array
+            $questions_and_choices[] = ["question" => $question, "choices" => $choices];
+        }
+        // dd($questions_and_choices);
         try
         {
             $data = [];
@@ -51,7 +61,7 @@ class VoteController extends Controller
             $file_path = '';
             $file_full_path = '';
             $vote = null;
-
+            $vote_id = null;
             if ($request->hasFile('image')) 
             {
                 $file = $request->file('image');
@@ -90,7 +100,6 @@ class VoteController extends Controller
                         {
                             $file_path = $video_path;
                         }
-                        
                     }
                 }
             } 
@@ -111,19 +120,26 @@ class VoteController extends Controller
                     'title_slug'=>str_replace(' ','-',$request->title),
                 ]);
                 if ($vote) {
+                    $vote_id = $vote->id;
                     //create question
-                    $question = '';
-
-                    if ($question) 
-                    {
-                        # code...
+                    foreach ($questions_and_choices as $question_and_choice) {
+                        $question = new Question();
+                        $question->content = $question_and_choice['question'];
+                        $question->vote_id = $vote_id;
+                        $question->save();
+                
+                        foreach ($question_and_choice['choices'] as $choiceText) {
+                            if (!$choiceText) {
+                                continue;
+                            }
+                            $choice = new ModelsChoise();
+                            $choice->content = $choiceText;
+                            $question->chooses()->save($choice);
+                        }
                     }
-                    else 
-                    {
-                        $vote->delete();
-                    }
+                   
                 }else{
-
+                    throw new Exception('حدث خطأ في إضافة الموضوع');
                 }
                 $data['success'] = 1;
                 $data['msg'] = 'تمت المعالجة بنجاح';

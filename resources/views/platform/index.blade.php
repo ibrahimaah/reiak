@@ -39,17 +39,18 @@
 <div class="row g-3">
     @forelse ($votes as $vote)
         @if ($vote->status == 'true')
-            <div class="col col-lg-6">
+            <div class="col-xs-12 col-lg-6">
                 @isset($vote->image)  
               
                 
                      
                         <div class="card h-100">
                         @if($vote->image !== '' && str_contains($vote->image,'videos'))
-                    
+
+                            
                             <a data-fancybox href="#myVideo{{ $vote->id }}">
                                 <img class="card-img-top"
-                                    src="{{ asset('assets/images/logo/logo.png') }}"
+                                    src="{{ asset('storage/images/video_play.png') }}"
                                 />
                             </a>
                             <video width="800" height="500" controls id="myVideo{{ $vote->id }}" style="display:none;">

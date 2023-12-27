@@ -23,7 +23,6 @@
 </div>
 
 <script>
-    console.log('hey')
   // Use jQuery or vanilla JavaScript to show the modal on page load
   $(document).ready(function() {
       if(!localStorage.getItem('alert')){
@@ -34,58 +33,75 @@
 
   });
 </script>
-<div class="row">
-    @forelse ($votes as $vote)
-    @if ($vote->status == 'true')
-        <div class="col-12 col-lg-6">
-            <!-- Simple card -->
-            <div class="card" style='height:330px;'>
-             
 
-                <img class="card-img-top" 
-                        width='100%' 
-                        height='200px' 
-                        src="{{ storage_path('app/public/images/'.$vote->image) }}" 
-                        onerror="this.src='{{ asset('assets/images/logo/logo.png') }}';"
-                        alt="Card image cap">
-          
-                <div class="card-body">
-                    <h4 class="card-title mb-2">{{ Illuminate\Support\Str::limit($vote->title, 30) }} </h4>
-                    {{-- <p class="card-text">At missed advice my it no sister. Miss told ham dull knew see she spot near can. Spirit her entire her called.</p> --}}
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-end">
-                            <a href="{{ route('vote.poll',$vote->title_slug) }}" class="btn btn-success"> ابدأ </a>
-                            <a href="{{ route('result.show',$vote->title_slug) }}" class="btn btn-secondary"> عرض النتائج </a>
-                        </div>
-                        <div>
+
+
+<div class="row g-3">
+    @forelse ($votes as $vote)
+        @if ($vote->status == 'true')
+            <div class="col col-lg-6">
+                @isset($vote->image)  
+              
+                
+                     
+                        <div class="card h-100">
+                        @if($vote->image !== '' && str_contains($vote->image,'videos'))
+                    
+                            <a data-fancybox href="#myVideo{{ $vote->id }}">
+                                <img class="card-img-top"
+                                    src="{{ asset('assets/images/logo/logo.png') }}"
+                                />
+                            </a>
+                            <video width="800" height="500" controls id="myVideo{{ $vote->id }}" style="display:none;">
+                                <source src="{{ asset('storage/'.$vote->image) }}" type="video/mp4">
+                                Your browser doesn't support HTML5 video tag.
+                            </video>
                             
-                            <div class="dropdown">
-                                <a href="#" class="btn btn-light dropdown p-2" data-bs-toggle="dropdown" aria-expanded="false">
+                        @else
+                            <img class="card-img-top"
+                                src="{{ asset('storage/'.$vote->image) }}" 
+                                onerror="this.src='{{ asset('assets/images/logo/logo.png') }}';"
+                                alt="Card image cap"
+                            >
+                        @endif
+                            <div class="card-body">
+                                <h5 class="card-title">{{ Illuminate\Support\Str::limit($vote->title, 30) }}</h5>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="text-end">
+                                        <a href="{{ route('vote.poll',$vote->title_slug) }}" class="btn btn-success"> ابدأ </a>
+                                        <a href="{{ route('result.show',$vote->title_slug) }}" class="btn btn-secondary"> عرض النتائج </a>
+                                    </div>
+                                    <div>
+                                        
+                                        <div class="dropdown">
+                                            <a href="#" class="btn btn-light dropdown p-2" data-bs-toggle="dropdown" aria-expanded="false">
+                                                
+                                                <i data-bs-toggle="tooltip" data-bs-placement="right" title=" مشاركة الرأي " class="bi bi-share text-dark me-2"></i>
+                                            </a>
+                                            <div class="dropdown-menu">
+                                                <a class="dropdown-item h6 text-end" href="https://wa.me/?text={{ route('vote.poll', $vote->title_slug) }}" target="_blank"> 
+                                                    <i class="mdi mdi-whatsapp h5 text-success"></i>
+                                                    <span> المشاركة عبر الواتساب </span>
+                                                </a>
+                                                <a  class="dropdown-item h6 text-end" href="https://twitter.com/intent/tweet?text={{ route('vote.poll', $vote->title_slug) }}" target="_blank">
+                                                    <i class="mdi mdi-twitter text-primary h5"></i>
+                                                    <span> المشاركة عبر تويتر </span>
+                                                </a>
                                     
-                                    <i data-bs-toggle="tooltip" data-bs-placement="right" title=" مشاركة الرأي " class="bi bi-share text-dark me-2"></i>
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item h6 text-end" href="https://wa.me/?text={{ route('vote.poll', $vote->title_slug) }}" target="_blank"> 
-                                        <i class="mdi mdi-whatsapp h5 text-success"></i>
-                                        <span> المشاركة عبر الواتساب </span>
-                                    </a>
-                                    <a  class="dropdown-item h6 text-end" href="https://twitter.com/intent/tweet?text={{ route('vote.poll', $vote->title_slug) }}" target="_blank">
-                                        <i class="mdi mdi-twitter text-primary h5"></i>
-                                        <span> المشاركة عبر تويتر </span>
-                                    </a>
-                           
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                  
-                </div>
-            </div><!-- end card -->
-        </div>
-    @endif
-       
+                    
+                        
+                    
+                @endisset
+            </div>
+        @endif  
     @empty
-        
+        <div class="alert alert-info">لا يوجد استطلاعات رأي حالياً</div>
     @endforelse
  
 </div>

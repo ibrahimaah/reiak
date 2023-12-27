@@ -76,3 +76,9 @@
 #addVoteForm > div:nth-child(3) > div > div > div:nth-child(1) > div:nth-child(3) > button:nth-child(2) {
   visibility: hidden !important;
 }
+
+.card-img-top {
+  width: 100%;
+  height: 25vw;
+  object-fit: cover;
+}

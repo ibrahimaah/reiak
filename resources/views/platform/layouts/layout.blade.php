@@ -7,12 +7,13 @@
     @include('admin.components.style')
     
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <!-- <script src="https://unpkg.com/filepond/dist/filepond.min.js"></script>
-    <script src="https://unpkg.com/jquery-filepond/filepond.jquery.js"></script> -->
     
 
     <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
     <script>
         function showToastMessage(text='تمت المعالجة بنجاح',isError=false){
             Toastify({  text ,

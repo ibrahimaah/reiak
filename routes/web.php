@@ -46,11 +46,15 @@ Route::resource('login', AuthController::class)->middleware('guest');
 Route::resource('register', RegisterController::class)->middleware('guest');
 Route::post('logout', [AuthadminController::class,'logout'])->name('logout')->middleware('auth');
 
+Route::get('auth/redirect/{provider}', [SocialiteController::class, 'redirectToProvider']);
+Route::get('auth/callback/{provider}', [SocialiteController::class, 'handleProviderCallback']);
+
 // polling
 
 Route::resource('vote', VoteController::class)->middleware('auth')->except(['show']);
 Route::get('poll/{id}', [VoteController::class,'poll'])->name('vote.poll');
-Route::get('mysubjects', [VoteController::class,'mysubjects'])->name('vote.mysubjects');
+// Route::get('mysubjects', [VoteController::class,'mysubjects'])->name('vote.mysubjects');
+Route::get('my-subjects', [VoteController::class,'getMySubjects'])->name('vote.my_subjects')->middleware('auth');
 
 //question 
 Route::resource('question', QuestionController::class);
@@ -66,13 +70,31 @@ Route::post('store-comment', [ResultController::class,'storeComment'])->name('st
 Route::delete('delete-comment/{id}', [ResultController::class,'deleteComment'])->name('delete-comment');
 Route::put('update-comment/{id}', [ResultController::class,'updateComment'])->name('update-comment');
 
-Route::get('auth/google',[SocialiteController::class,'redirectToGoogle']);
-Route::get('auth/google/callback',[SocialiteController::class,'handleGoogleCallback']);
+
+
+
+
+// Route::get('auth/google',[SocialiteController::class,'redirectToGoogle']);
+// Route::get('auth/google/callback',[SocialiteController::class,'handleGoogleCallback']);
+
+// Route::get('auth/twitter/redirect',[SocialiteController::class,'redirectToTwitter']);
+// Route::get('auth/twitter/callback',[SocialiteController::class,'handleTwitterCallback']);
+
+Route::get('login/{provider}', [AuthController::class, 'redirectToProvider']);
+Route::get('login/{provider}/callback', [AuthController::class, 'handleProviderCallback']);
 
 
 Route::get('about', function(){
         return view('platform.about');
     })->name('platform.about');
+
+
+Route::get('/privacy-policy',function(){
+    return view('platform.privacy-policy');
+});
+Route::get('/terms-of-service',function(){
+    return view('platform.terms-of-service');
+});
 
 
 

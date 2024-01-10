@@ -37,4 +37,9 @@ return [
         'redirect' => 'http://reiak.com/auth/google/callback',
     ],
 
+    'twitter-oauth-2' => [
+        'client_id' => env('TWITTER_CLIENT_ID'),
+        'client_secret' => env('TWITTER_CLIENT_SECRET'),
+        'redirect' => 'auth/twitter/callback',
+    ],
 ];

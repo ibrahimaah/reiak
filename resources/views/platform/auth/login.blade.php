@@ -76,7 +76,8 @@
                                                     </div>
                                                     <div class="pt-2 hstack gap-2 justify-content-center">
                                                         {{-- <button type="button" class="btn btn-subtle-primary btn-icon"><i class="ri-facebook-fill fs-lg"></i></button> --}}
-                                                        <a href="auth/google" class="btn btn-subtle-danger btn-icon"><i class="ri-google-fill fs-2"></i></a>
+                                                        {{-- <a href="auth/google" class="btn btn-subtle-danger btn-icon"><i class="ri-google-fill fs-2"></i></a> --}}
+                                                        <a href="auth/twitter/redirect" class="btn btn-subtle-danger btn-icon"><i class="ri-twitter-fill fs-2"></i></a>
                                                         {{-- <button type="button" class="btn btn-subtle-dark btn-icon"><i class="ri-github-fill fs-lg"></i></button>
                                                         <button type="button" class="btn btn-subtle-info btn-icon"><i class="ri-twitter-fill fs-lg"></i></button> --}}
                                                     </div>

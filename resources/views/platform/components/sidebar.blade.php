@@ -45,7 +45,7 @@
        </div>
         @endif --}}      
 <nav id="sidebar" class="d-none d-md-block sidebar mb-3" style='background-color:#fff;width:100%;'>
-    <div class="position-sticky p-0">
+    <div class="position-sticky p-0 border">
       <ul class="nav flex-column p-0">
         @include('platform.components.sidebar_links')
       </ul>

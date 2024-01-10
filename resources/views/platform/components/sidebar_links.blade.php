@@ -10,7 +10,7 @@
     </a>
 </li>
 <li class="nav-item">
-    <a class="nav-link {{ request()->is('mysubjects') ? 'active' : 'text-secondary' }}" href="{{ route('vote.mysubjects') }}">
+    <a class="nav-link {{ request()->is('my-subjects') ? 'active' : 'text-secondary' }}" href="{{ route('vote.my_subjects') }}">
         مواضيعي
     </a>
 </li>

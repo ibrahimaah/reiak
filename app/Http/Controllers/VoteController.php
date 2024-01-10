@@ -40,6 +40,12 @@ class VoteController extends Controller
     {
         return view('platform.vote.mysubjects');
     }
+
+    public function getMySubjects()
+    {
+        $user_votes = Vote::where('user_id',auth()->id())->get();
+        return view('platform.vote.my_subjects')->with('user_votes', $user_votes);
+    }
     /**
      * Store a newly created resource in storage.
      */

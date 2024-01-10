@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
+// use App\Models\User;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
+// use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -29,15 +30,21 @@ class AuthController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'email'=>'required',
-            'password'=>'required',
-        ]);
-        $credentials = $request->only('email','password');
-        if(Auth::attempt($credentials)){
-            return redirect()->route('platform.index');
+        try{
+            $request->validate([
+                'email'=>'required',
+                'password'=>'required',
+            ]);
+            $credentials = $request->only('email','password');
+            // $credentials = $request->only('email');
+            if(Auth::attempt($credentials)){
+                return redirect()->route('platform.index');
+            }
+            return redirect()->back()->with('message','  عدرا البيانات غير متوفرة !  ');
         }
-        return redirect()->back()->with('message','  عدرا البيانات غير متوفرة !  ');
+        catch(Exception $ex){
+            dd($ex->getMessage());
+        }
     }
 
     /**

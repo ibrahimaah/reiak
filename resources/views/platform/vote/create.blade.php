@@ -83,42 +83,10 @@
     </div>
 </div>
 
-
-
-
     
 <script src="{{ asset('assets/js/jquery.replicate.js') }}"></script>
 <script>
-    // Show overlay
-    function showOverlayWithMessage(message) {
-        $("<div id='overlay'></div>")
-            .css({
-                position: "fixed",
-                top: 0,
-                left: 0,
-                width: "100%",
-                height: "100%",
-                background: "rgba(0, 0, 0, 0.5)",
-                zIndex: 9999,
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center"
-            })
-            .html(`
-                    <div id='overlay-message' class='d-flex alert alert-success'>
-                     <div>${message} &nbsp;</div>
-                     <div class="spinner-border text-success" role="status">
-                        <span class="visually-hidden">Loading...</span>
-                    </div>
-                    </div>
-                `)
-            .appendTo("body");
-    }
-    // Hide overlay
-    function hideOverlay() {
-        $("#overlay").remove();
-    }
-
+    
 
     const selector = '[data-x-wrapper]';
     let options = {
@@ -130,21 +98,7 @@
     };
 
     $(selector).replicate(options);
-
-
-
-    //hiding trash icon from first form
-    // $('[data-add-btn]').on('click',()=>{
-        // $('#addVoteForm > div:nth-child(3) > div > div > div:nth-child(1) button.btn-outline-danger').addClass('invisible')
-        // $('#addVoteForm > div:nth-child(3) > div > div > div:nth-child(1) button.btn-outline-success').on('click',()=>{
-        //     $('#addVoteForm > div:nth-child(3) > div > div > div:nth-child(2) button.btn-outline-danger').addClass('btn-lg')
-        // })
-    // })
     
-    // $('[data-x-group="0"]').addClass('invisible')
-    
-    
-
     const form = $('#addVoteForm');
 
     $(form).on('submit', (e) => {
@@ -161,8 +115,7 @@
         for (let i = 0; i < fd.length; i++) {
             formData.append(fd[i].name, fd[i].value);
         }
-        const waiting_msg = 'جاري المعالجة'
-        const err_msg = 'حدث خطأ في المعالجة'
+       
 
         $.ajax({
                 url: "{{ route('vote.store') }}",
@@ -180,13 +133,13 @@
                 complete: function() {
                     hideOverlay();
                     $('#submit_button').removeClass('disabled')
-                    // $(form).reset()
                 },
                 success:(response)=>{
                     if (response.success == 0) {
                         showToastMessage(response.msg,true)
                     }else if(response.success == 1){
                         showToastMessage(response.msg)
+                        form.trigger("reset");
                     }
                 },
                 error:()=>{

@@ -181,24 +181,14 @@
                 
                         
                                                 <div class="mt-4">
-                                                    <button class="btn btn-success w-100" type="submit"> تسجيل الحساب  </button>
+                                                    <button class="btn btn-success w-100" type="submit"> إنشاء حساب  </button>
                                                 </div>
                         
-                                                <div class="mt-4 pt-2 text-center">
-                                                    <div class="signin-other-title position-relative">
-                                                        <h5 class="fs-sm mb-4 title"> انشاء حساب من </h5>
-                                                    </div>
-                                                    <div class="pt-2 hstack gap-2 justify-content-center">
-                                                        {{-- <button type="button" class="btn btn-subtle-primary btn-icon"><i class="ri-facebook-fill fs-lg"></i></button> --}}
-                                                        <a href="auth/google" class="btn btn-subtle-danger btn-icon"><i class="ri-google-fill fs-2"></i></a>
-                                                        {{-- <button type="button" class="btn btn-subtle-dark btn-icon"><i class="ri-github-fill fs-lg"></i></button>
-                                                        <button type="button" class="btn btn-subtle-info btn-icon"><i class="ri-twitter-fill fs-lg"></i></button> --}}
-                                                    </div>
-                                                </div>
+                                                
                                             </form>
                         
                                             <div class="text-center mt-5">
-                                                <p class="mb-0">  هل لديك حساب ? <a href="{{ route('login.index') }}" class="fw-semibold text-secondary text-decoration-underline"> تسجيل الدخول  </a> </p>
+                                                <p class="mb-0">  هل لديك حساب ؟ <a href="{{ route('login.index') }}" class="fw-semibold text-secondary text-decoration-underline"> تسجيل الدخول  </a> </p>
                                             </div>
                                         </div>
                                     </div><!-- end card body -->

@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 class Result extends Model
 {
     use HasFactory;
-    protected $fillable = ['ip','survey_id','question_id','city','answer_id','content'];
+    protected $fillable = ['ip','survey_id','question_id','city','answer_id','content','user_id'];
     public function questions(){
         return $this->belongsTo(Result::class,'question_id');
     }

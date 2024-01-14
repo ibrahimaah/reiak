@@ -22,34 +22,82 @@ class ResultController extends Controller
         return view('platform.results.show',compact('poll','comments'));
     }
 
+    public function check_is_already_participating($survey_id)
+    {
+        $is_already_participating = Result::where('survey_id',$survey_id)->where('user_id',auth()->id())->first();
 
-    public function store(Request $request){
-        $answers = $request->input('answers');
-        foreach ($answers as $answer) {
-            $validator = Validator::make($answer, [
-                'survey_id' => 'required',
-                'question_id' => [
-                    'required',
-                    Rule::unique('results')->where(function ($query) use ($answer) {
-                        return $query->where('ip', $answer['ip']);
-                    }),
-                ],
-                'ip' => 'required',
-                'city' => 'required',
-                'content' => 'required',
-                'answer_id' => 'required',
-            ]);
+        if ($is_already_participating) return true;
+        
+        return false;
+    }
 
-
-            if ($validator->fails()) {
-                // Handle validation failure, you might want to return a response or take some other action
-                return response()->json(['error' => $validator->errors()], 400);
+    public function store(Request $request)
+    {
+        try 
+        {
+            $data = [];
+            $answers = $request->input('answers');
+            $survey_id = $request->input('survey_id');
+            if (!$survey_id) {
+                throw new Exception('حدث خلل برمجي');
             }
+            
+            $is_already_participating = $this->check_is_already_participating($survey_id);
 
-            Result::create($answer);
+            if ($is_already_participating) 
+            {
+                throw new Exception('لقد شاركت بهذا الاستبيان من قبل');
+            }
+            else 
+            {
+                foreach ($answers as $answer) 
+                {
+                    $validator = Validator::make($answer, [
+                        'question_id' => 'required',
+                        'ip' => 'required',
+                        'city' => 'required',
+                        'content' => 'required',
+                        'answer_id' => 'required',
+                    ]);
+        
+        
+                    if ($validator->fails()) 
+                    {
+                        throw new Exception('هناك نقص في البيانات المدخلة');
+                    }
+                    else 
+                    {
+                        $result = new Result();
+                        $result->ip = $answer['ip'];
+                        $result->question_id = $answer['question_id'];
+                        $result->answer_id = $answer['answer_id'];
+                        $result->content = $answer['content'];
+                        $result->city = $answer['city'];
+                        $result->survey_id = $survey_id;
+                        $result->user_id = auth()->id();
+                        
+                        if (!$result->save()) 
+                        {
+                            throw new Exception('حدث خطأ في تخزين البيانات');
+                        }
+                       
+                    }
+                    
+                }
+
+                $data['success'] = 1;
+                $data['msg'] = 'تمت المعالجة بنجاح';
+                return response()->json($data);
+        
+                
+            }
         }
-
-        return 'created done';
+        catch(Exception $ex)
+        {
+            $data['success'] = 0;
+            $data['msg'] = $ex->getMessage();
+            return response()->json($data);
+        }
     }
 
 

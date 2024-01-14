@@ -224,10 +224,18 @@ class VoteController extends Controller
     }
 
     public function poll($id){
-        $votes = Vote::where('title_slug',$id)->first();
-        if (!$votes) {
+        $resultController = new ResultController();
+
+        $vote = Vote::where('title_slug',$id)->first();
+        if (!$vote) {
             abort(404);
         }
-        return view('platform.vote.poll',compact('votes'));
+
+        $is_already_participating = false;
+        if ($resultController->check_is_already_participating($vote->id)) {
+            $is_already_participating = true;
+        }
+        
+        return view('platform.vote.poll')->with('vote',$vote)->with('is_already_participating',$is_already_participating);
     }
 }

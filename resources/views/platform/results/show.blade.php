@@ -16,39 +16,29 @@
 </style>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <div class="w-75 m-auto">
-    <div class="card">
-        @foreach ($poll->questions as $result)
-        @endforeach
-        <div class="card-header">
+    <div class="card"> 
+        <div class="card-header d-flex justify-content-between align-items-baseline">
             <h4> بيانات الاجوبة </h4>
+            <h5 class="text-secondary"> <span>عدد الأصوات :</span> <span class="fw-bold">{{ $totalVotes }}</span></h5>
         </div>
         <div class="card-body">
-        @php
-            $data = [];
-        @endphp
-            @foreach ($poll->questions as $result)
-                @foreach ($result->results as $r)
-                    @php
-                        $content = $r->content;
-                        // If the content is not yet in the $data array, initialize the count to 1
-                        if (!isset($data[$result->content][$content])) {
-                            $data[$result->content][$content] = 1;
-                        } else {
-                            // If the content is already in the $data array, increment the count
-                            $data[$result->content][$content]++;
-                        }
-                    @endphp
+            
+        @foreach($results as $question_content => $choice_percentage_arr )
+            @php 
+                $max_percentage = max($choice_percentage_arr)
+            @endphp 
+            <h5>{{ ++$loop->index}}<span>)</span> {{ $question_content }} </h5> 
+            <div class="me-3">
+                @foreach($choice_percentage_arr as $choice_content => $percentage)
+                    <p class="d-block mb-1 text-secondary <?=$percentage == $max_percentage ? 'fw-bold' :''?>">{{ $choice_content }}</p>
+                    <div class = "progress" style = "height: 25px"> 
+                        <div class = "progress-bar <?=$percentage == $max_percentage ? 'bg-success' :''?>" style = "width:<?=$percentage?>%">  
+                        <b>% {{ $percentage }} </b>   
+                        </div>  
+                    </div>
+                <br>  
                 @endforeach
-            @endforeach
-                     
-        @foreach ($data  as $q => $c)
-            <h6>{{ $q }}</h6>
-            @foreach ($c as $d => $i)
-            <div class="myOtherBarChart my-2" style="width:150px">
-                <span>{{ $i }}</span><span class="me-2">{{  $d }}</span>
             </div>
-            @endforeach
-         
         @endforeach
         </div>
     </div>

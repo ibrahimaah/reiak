@@ -15,11 +15,30 @@ class ResultController extends Controller
     public function show($title)
     {
         $poll = Vote::where('title_slug',$title)->first();
+        
         if(!$poll) abort(404);
         
         $comments = $poll->comments()->approved()->orderBy('created_at', 'desc')->get();
 
-        return view('platform.results.show',compact('poll','comments'));
+
+        $results = [];
+        $totalVotes = 0;
+         foreach ($poll->questions as $question) 
+         {
+            $totalVotes = Result::where('question_id', $question->id)->count();
+
+            foreach ($question->chooses as $choice) 
+            {
+                $votesCount = Result::where('question_id', $question->id)
+                                    ->where('answer_id', $choice->id)
+                                    ->count();
+                $percentage = $totalVotes > 0 ? ($votesCount / $totalVotes) * 100 : 0;
+                $percentage = number_format($percentage, 2);
+                $results[$question->content][$choice->content] = $percentage;
+            }
+        }
+        
+        return view('platform.results.show',compact('poll','comments','results','totalVotes'));
     }
 
     public function check_is_already_participating($survey_id)

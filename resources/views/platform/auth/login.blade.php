@@ -1,32 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    @include('admin.components.style')
-    <title>  تسجيل الدخول </title>
-    <style>
-        html,body{
-            direction: rtl
-        }
-    </style>
-</head>
-<body>
-    <section class="auth-page-wrapper py-5 position-relative d-flex align-items-center justify-content-center min-vh-100">
+@extends('platform.layouts.layout')
+@section('content')
+
+    <section class="auth-page-wrapper position-relative d-flex align-items-center justify-content-center min-vh-100">
         <div class="container">
             <div class="row justify-content-center">
                 <div class="col-lg-9">
                     <div class="card mb-0">
                         <div class="row g-0 align-items-center">
-                            @include('platform.components.auth_intro_figure')
+                            {{-- @include('platform.components.auth_intro_figure') --}}
                             <!--end col-->
                             <div class="col-xxl-6 mx-auto">
                                 <div class="card mb-0 border-0 shadow-none mb-0">
-                                    <div class="card-body p-sm-5 m-lg-4">
-                                        <div class="text-center mt-5">
-                                            <h5 class="fs-3xl">مرحبا</h5>
-                                            <p class="text-muted">قم بتسجيل الدخول للمتابعة الى المنصة </p>
+                                    <div class="card-body">
+                                        <div class="text-center mt-5 row align-items-center justify-content-center">
+                                            <div class="col-md-8">
+                                                <h5 class="fs-3xl">مرحبا</h5>
+                                                <p class="text-muted">قم بتسجيل الدخول للمتابعة الى منصة وش رايك </p>
+                                            </div>
+                                            <div class="d-none d-md-block col-md-4">
+                                                <img class="img-fluid"
+                                                    src="{{ asset('assets/images/logo/logo.png') }}"
+                                                    alt="Logo"
+                                                />
+                                            </div>
                                         </div>
                                         <div class="p-2 mt-5">
                                             <form action="{{ route('login.store') }}" method="POST">
@@ -43,7 +39,13 @@
                                                         <div class="mb-3">
                                                             <label for="username" class="form-label"> الايميل   <span class="text-danger">*</span></label>
                                                             <div class="position-relative ">
-                                                                <input type="text" class="form-control  password-input" value="{{ old('email') }}" name="email" id="username" placeholder=" أدخل الايميل " required="">
+                                                                <input type="text" 
+                                                                       class="form-control password-input" 
+                                                                       value="{{ old('email') }}" 
+                                                                       name="email"
+                                                                       dir="ltr" 
+                                                                       required
+                                                                />
                                                             </div>
                                                             @error('email')
                                                             <span class="text-danger">{{ $message }}</span>
@@ -52,14 +54,20 @@
                             
                                                         <div class="mb-3">
                                                             <div class="d-flex justify-content-between">
-                                                                <label class="form-label" for="password-input"> كلمة السر <span class="text-danger">*</span></label>
-                                                                <div class="float-end me-auto">
+                                                                <label class="form-label" for="password-input"> كلمة المرور <span class="text-danger">*</span></label>
+                                                                {{--<div class="float-end me-auto">
                                                                     <a href="auth-pass-reset.html" class="text-muted"> هل نسيت كلمة السر؟ </a>
-                                                                </div>
+                                                                </div> --}}
                                                             </div>
                                                 
                                                             <div class="position-relative auth-pass-inputgroup mb-3">
-                                                                <input type="password" class="form-control password-input " value="{{ old('password') }}" name="password" placeholder=" أدخل كلمة السر " id="password-input" required="">
+                                                                <input type="password" 
+                                                                       class="form-control password-input" 
+                                                                       value="{{ old('password') }}" 
+                                                                       name="password" 
+                                                                       dir="ltr" 
+                                                                       required 
+                                                                />
                                                                 @error('password')
                                                                 <span class="text-danger">{{ $message }}</span>
                                                                 @enderror
@@ -102,7 +110,7 @@
                                             </form>
                         
                                             <div class="text-center mt-5">
-                                                <p class="mb-0">  هل ليس لديك حساب ? <a href="{{ route('register.index') }}" class="fw-semibold text-secondary text-decoration-underline"> انشاء حساب  </a> </p>
+                                                <p class="mb-0">   ليس لديك حساب ؟ <a href="{{ route('register.index') }}" class="fw-semibold text-secondary text-decoration-underline"> انشاء حساب  </a> </p>
                                             </div>
                                         </div>
                                     </div><!-- end card body -->
@@ -119,6 +127,4 @@
         </div>
         <!--end container-->
     </section>
-    @include('admin.components.scripts')
-</body>
-</html>
+@endsection

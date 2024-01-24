@@ -30,32 +30,32 @@ class RegisterController extends Controller
      */
     public function store(Request $request)
     {
-        try 
-        {
+        // try 
+        // {
             $request->validate([
                 'name'=>'required',
                 'email'=>'required|email|unique:users',
-                'birth'=>'required',
-                'number'=>'required',
-                'gender'=>'required|in:man,female',
-                'password'=>'required|min:8|max:20',
+                // 'birth'=>'required',
+                // 'number'=>'required',
+                // 'gender'=>'required|in:man,female',
+                'password'=>'required|confirmed|min:8|max:20',
             ]);
             $user = User::create([
                 'name'=>$request->name,
-                'number'=>$request->number,
+                // 'number'=>$request->number,
                 'role'=>'user',
                 'email'=>$request->email,
-                'birth'=>$request->birth,
-                'gender'=>$request->gender,
+                // 'birth'=>$request->birth,
+                // 'gender'=>$request->gender,
                 'password'=>Hash::make($request->password),
             ]);
             auth()->login($user);
             return redirect()->route('platform.index');
-        }
-        catch(Exception $ex)
-        {
-            dd($ex->getMessage());
-        }
+        // }
+        // catch(Exception $ex)
+        // {
+            // dd($ex->getMessage());
+        // }
         // return redirect()->route('login.index');
     }
 
